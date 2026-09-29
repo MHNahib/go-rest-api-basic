@@ -4,8 +4,8 @@ import (
 	"database/sql"
 	"log/slog"
 
-	"github.com/MHNahib/rest-api/internal/config"
-	"github.com/MHNahib/rest-api/internal/types"
+	"github.com/MHNahib/go-rest-api-basic/internal/config"
+	"github.com/MHNahib/go-rest-api-basic/internal/types"
 	_ "modernc.org/sqlite"
 )
 

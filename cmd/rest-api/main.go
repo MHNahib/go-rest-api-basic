@@ -11,11 +11,11 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/MHNahib/rest-api/internal/config"
-	"github.com/MHNahib/rest-api/internal/http/handlers/todos"
-	"github.com/MHNahib/rest-api/internal/storage"
-	"github.com/MHNahib/rest-api/internal/storage/sqlite"
-	"github.com/MHNahib/rest-api/internal/utils/response"
+	"github.com/MHNahib/go-rest-api-basic/internal/config"
+	"github.com/MHNahib/go-rest-api-basic/internal/http/handlers/todos"
+	"github.com/MHNahib/go-rest-api-basic/internal/storage"
+	"github.com/MHNahib/go-rest-api-basic/internal/storage/sqlite"
+	"github.com/MHNahib/go-rest-api-basic/internal/utils/response"
 )
 
 func main() {

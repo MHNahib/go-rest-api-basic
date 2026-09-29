@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/MHNahib/rest-api/internal/storage"
-	"github.com/MHNahib/rest-api/internal/types"
-	"github.com/MHNahib/rest-api/internal/utils/response"
+	"github.com/MHNahib/go-rest-api-basic/internal/storage"
+	"github.com/MHNahib/go-rest-api-basic/internal/types"
+	"github.com/MHNahib/go-rest-api-basic/internal/utils/response"
 	"github.com/go-playground/validator/v10"
 )
 

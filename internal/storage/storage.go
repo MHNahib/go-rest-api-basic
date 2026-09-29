@@ -1,6 +1,6 @@
 package storage
 
-import "github.com/MHNahib/rest-api/internal/types"
+import "github.com/MHNahib/go-rest-api-basic/internal/types"
 
 type Storage interface {
 	GetTodos() (types.Todos, error)

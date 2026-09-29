@@ -1,4 +1,4 @@
-module github.com/MHNahib/rest-api
+module github.com/MHNahib/go-rest-api-basic
 
 go 1.27.1
 
