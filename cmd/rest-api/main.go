@@ -11,5 +11,5 @@ func main() {
 
 	appConfig := config.MountConfig()
 
-	fmt.Println(appConfig)
+	fmt.Println("app config: ", appConfig)
 }
