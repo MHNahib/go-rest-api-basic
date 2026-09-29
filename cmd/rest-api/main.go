@@ -1,9 +1,18 @@
 package main
 
 import (
+	"context"
+	"errors"
 	"fmt"
+	"log/slog"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
 
 	"github.com/MHNahib/rest-api/internal/config"
+	"github.com/MHNahib/rest-api/internal/storage/sqlite"
 )
 
 func main() {
@@ -11,5 +20,61 @@ func main() {
 
 	appConfig := config.MountConfig()
 
-	fmt.Println("app config: ", appConfig)
+	fmt.Printf("app is on env: %s mode\n", appConfig.Env)
+
+	database, err := sqlite.New(appConfig)
+
+	if err != nil {
+		slog.Error("cannot create database", "err", err.Error())
+		os.Exit(1)
+	}
+
+	defer database.Db.Close()
+
+	slog.Info("database is ready")
+
+	server := createSever(appConfig)
+
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
+
+	go func() {
+
+		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			slog.Error("cannot start server", "err", err.Error())
+		}
+
+	}()
+	slog.Info("server is ready on", "address", appConfig.Server.Address)
+
+	<-done
+
+	slog.Info("Shutting down the server!")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if err := server.Shutdown(ctx); err != nil {
+		slog.Error("Failed to shutdown server", "error", err)
+	}
+
+	slog.Info("Server stopped")
+}
+
+func createSever(config *config.Config) *http.Server {
+	server := http.Server{
+		Addr:    config.Server.Address,
+		Handler: appRouter(),
+	}
+	return &server
+}
+
+func appRouter() *http.ServeMux {
+	router := http.NewServeMux()
+
+	router.HandleFunc("GET /todo", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("bismillah"))
+	})
+
+	return router
 }
