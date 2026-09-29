@@ -1,0 +1,64 @@
+@baseUrl = http://localhost:8080
+
+### Root
+GET {{baseUrl}}/
+
+### Health
+GET {{baseUrl}}/health
+
+### Get all todos
+GET {{baseUrl}}/todo
+
+### Create todo
+POST {{baseUrl}}/todo
+Content-Type: application/json
+
+{
+  "text": "Clean the room",
+  "done": false
+}
+
+### Create todo - empty body (expect 400)
+POST {{baseUrl}}/todo
+Content-Type: application/json
+
+### Create todo - missing text (expect 400 validation error)
+POST {{baseUrl}}/todo
+Content-Type: application/json
+
+{
+  "done": false
+}
+
+### Update todo
+PUT {{baseUrl}}/todo
+Content-Type: application/json
+
+{
+  "id": 1,
+  "text": "Clean the room",
+  "done": true
+}
+
+### Update todo - missing id (expect 400)
+PUT {{baseUrl}}/todo
+Content-Type: application/json
+
+{
+  "text": "Clean the room",
+  "done": true
+}
+
+### Delete todo
+POST {{baseUrl}}/todo/delete
+Content-Type: application/json
+
+{
+  "id": 1
+}
+
+### Delete todo - missing id (expect 400)
+POST {{baseUrl}}/todo/delete
+Content-Type: application/json
+
+{}

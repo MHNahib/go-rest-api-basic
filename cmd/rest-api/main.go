@@ -12,7 +12,10 @@ import (
 	"time"
 
 	"github.com/MHNahib/rest-api/internal/config"
+	"github.com/MHNahib/rest-api/internal/http/handlers/todos"
+	"github.com/MHNahib/rest-api/internal/storage"
 	"github.com/MHNahib/rest-api/internal/storage/sqlite"
+	"github.com/MHNahib/rest-api/internal/utils/response"
 )
 
 func main() {
@@ -33,7 +36,7 @@ func main() {
 
 	slog.Info("database is ready")
 
-	server := createSever(appConfig)
+	server := createSever(appConfig, database)
 
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGTERM)
@@ -43,7 +46,7 @@ func main() {
 		if err := server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 			slog.Error("cannot start server", "err", err.Error())
 		}
-
+		slog.Info("server is ready on", "address", appConfig.Server.Address)
 	}()
 	slog.Info("server is ready on", "address", appConfig.Server.Address)
 
@@ -61,20 +64,28 @@ func main() {
 	slog.Info("Server stopped")
 }
 
-func createSever(config *config.Config) *http.Server {
+func createSever(config *config.Config, database storage.Storage) *http.Server {
 	server := http.Server{
 		Addr:    config.Server.Address,
-		Handler: appRouter(),
+		Handler: appRouter(database),
 	}
 	return &server
 }
 
-func appRouter() *http.ServeMux {
+func appRouter(database storage.Storage) *http.ServeMux {
 	router := http.NewServeMux()
-
-	router.HandleFunc("GET /todo", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte("bismillah"))
+	router.HandleFunc("GET /", func(w http.ResponseWriter, r *http.Request) {
+		response.WriteJson(w, http.StatusOK, nil, "success")
 	})
+
+	router.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
+		response.WriteJson(w, http.StatusOK, nil, "success")
+	})
+
+	router.HandleFunc("GET /todo", todos.GetTodosHandler(database))
+	router.HandleFunc("POST /todo", todos.CreateTodoHandler(database))
+	router.HandleFunc("PUT /todo", todos.UpdateTodoHandler(database))
+	router.HandleFunc("POST /todo/delete", todos.DeleteTodoHandler(database))
 
 	return router
 }
